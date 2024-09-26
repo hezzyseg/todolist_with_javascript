@@ -1,7 +1,6 @@
 $(document).ready(function() {
     $('#add').on('click', function() {
         let teammateName = $('#teammate_name').val().trim();
-
             
         if (teammateName) {
 
@@ -14,6 +13,7 @@ $(document).ready(function() {
             });
 
             if(!exists){
+                //this written w/ chat gpt
                 // Create a new option element and append it to the dropdown
                 $('#choose_name').append(new Option(teammateName, teammateName));
 
@@ -30,6 +30,11 @@ $(document).ready(function() {
             else{
                 $('#error_message').text('Teammate already exists!');
             }
+        }
+
+        //handle blank input
+        else{
+            $('#error_message').text('Teammate name cannot be blank.');
         }
     });
 });
