@@ -40,6 +40,60 @@ $(document).ready(function() {
         }
     });
 
+    $('#assign').on('click', function() {
+
+        let teamMember = $('#choose_name').val().trim();
+        let taskName = $('#task').val().trim();
+        let dueDate = $('#date_input').val().trim();
+
+        //check if anything blank
+        if (!teamMember || !taskName || !dueDate){
+            $('#error_message').text('Please choose a team member, write a task, and select a due date.');
+        }
+        //check if due date is earlier than today
+        let today = new Date().toISOString().split('T')[0]; 
+        if (dueDate < today) {
+            $('#error_message').text('Due date cannot be earlier than today!');
+            return; // Exit if due date is in the past
+        } else {
+            $('#error_message').text('');
+        }
+
+        // find if teammate section already exists
+        let $existingTeammateSection = $(`#todo_list .name:contains(${teamMember})`);
+        if ($existingTeammateSection.length === 0) {
+            // Create a new teammate section
+            $('#todo_list').append(`
+                <div class="name">${teamMember}</div>
+                <div class="task">
+                    <span class="task_name">${taskName}</span>
+                    <span class="due_date">Due: ${dueDate} <input type="checkbox"></span>
+                </div>
+            `);
+        } else {
+            // append task since section already exists
+            $existingTeammateSection.next().after(`
+                <div class="task">
+                    <span class="task_name">${taskName}</span>
+                    <span class="due_date">Due: ${dueDate} <input type="checkbox"></span>
+                </div>
+            `);
+        }
+
+        // remove no tasks message if tasks added
+        if ($('#todo_list').text().includes('No tasks right now. Please add a teammate and assign a task.')) {
+            $('#todo_list').html(''); // Clear the message
+        }
+
+        // Clear the input fields
+        $('#task').val('');
+        $('#date_input').val('');
+        $('#error_message').text(''); // Clear error message
+
+        
+
+    });
+
     // Function to sort dropdown options (written w/ ChatGPT)
     function sortDropdown() {
         let options = $('#choose_name option').not('[value=""]').get(); // Get all options except the default one
@@ -48,4 +102,5 @@ $(document).ready(function() {
         });
         $('#choose_name').empty().append('<option value="" disabled selected>Assign to</option>').append(options); // Reappend sorted options
     }
+
 });
