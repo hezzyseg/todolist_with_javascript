@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Add jQuery -->
+        <script src="logic.js" defer></script>
+    </head>
+    <body>
+        <div id="page">
+            <div id="title" class="entire_page">
+                To-Do List
+            </div>
+            <div id="name_add" class="entire_page">
+                <input type="text" id="teammate_name" placeholder="Teammate Name"> <button type="button" id="add">Add</button>
+                <div id="error_message"></div>
+            </div>
+            <div id="name_assign" class="entire_page">
+                <select id="choose_name">
+                    <option value="" selected >Assign to</option> <!-- Default option -->
+                </select>
+                <input type="text" id="task" placeholder="Task"> <input type="date" id="date_input"> <button type="button" id="assign">Assign</button>
+            </div>
+
+            <hr>
+            <div id="todo_list" class="entire_page">
+                No tasks right now. Please add a teammate and assign a task.
+            </div>
+            <hr>
+
+            <div id="bottom" class="entire_page">
+                <button type="button" id="green_button">Clear Completed</button>
+                <button type="button" id="gray_button">Reset</button>
+            </div>
+
+        </div>
+    </body>
+</html>
