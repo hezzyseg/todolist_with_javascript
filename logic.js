@@ -20,6 +20,8 @@ $(document).ready(function() {
                 // Disable the "Assign to" default option
                 $('#choose_name option[value=""]').prop('disabled', true);
 
+                sortDropdown();
+
                 // Clear the input field after adding the teammate
                 $('#teammate_name').val('');
 
@@ -37,4 +39,13 @@ $(document).ready(function() {
             $('#error_message').text('Teammate name cannot be blank.');
         }
     });
+
+    // Function to sort dropdown options (written w/ ChatGPT)
+    function sortDropdown() {
+        let options = $('#choose_name option').not('[value=""]').get(); // Get all options except the default one
+        options.sort(function(a, b) {
+            return $(a).text().toLowerCase().localeCompare($(b).text().toLowerCase());
+        });
+        $('#choose_name').empty().append('<option value="" disabled selected>Assign to</option>').append(options); // Reappend sorted options
+    }
 });
