@@ -85,6 +85,8 @@ $(document).ready(function() {
             `);
         }
 
+        sortTasks($existingTeammateSection.next().parent());
+
 
         // Clear the input fields
         $('#task').val('');
@@ -102,6 +104,18 @@ $(document).ready(function() {
             return $(a).text().toLowerCase().localeCompare($(b).text().toLowerCase());
         });
         $('#choose_name').empty().append('<option value="" disabled selected>Assign to</option>').append(options); // Reappend sorted options
+    }
+
+    // function to sort tasks based on due date (chatGPT)
+    function sortTasks(teammateSection) {
+        let tasks = teammateSection.find('.task').toArray();
+        tasks.sort((a, b) => {
+            // Compare due dates in ascending order (earlier dates first)
+            return $(a).data('due_date') < $(b).data('due_date') ? -1 : 1;
+        });
+        // Remove existing tasks and append sorted tasks
+        teammateSection.find('.task').remove();
+        teammateSection.append(tasks);
     }
 
 });
