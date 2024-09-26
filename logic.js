@@ -59,7 +59,12 @@ $(document).ready(function() {
             $('#error_message').text('');
         }
 
-        // find if teammate section already exists
+        // remove no tasks message if tasks added
+        if ($('#todo_list').text().includes('No tasks right now. Please add a teammate and assign a task.')) {
+            $('#todo_list').html(''); // Clear the message
+        }
+
+        // find if teammate section already exists (written w/ help from ChatGPT)
         let $existingTeammateSection = $(`#todo_list .name:contains(${teamMember})`);
         if ($existingTeammateSection.length === 0) {
             // Create a new teammate section
@@ -80,10 +85,6 @@ $(document).ready(function() {
             `);
         }
 
-        // remove no tasks message if tasks added
-        if ($('#todo_list').text().includes('No tasks right now. Please add a teammate and assign a task.')) {
-            $('#todo_list').html(''); // Clear the message
-        }
 
         // Clear the input fields
         $('#task').val('');
