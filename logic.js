@@ -132,7 +132,7 @@ $(document).ready(function() {
             let dateB = new Date($(b).find('.due_date').text().replace('Due: ', '').trim());
             
             // Return comparison for ascending order
-            return dateA - dateB; // Ascending order
+            return dateB - dateA; // Ascending order
         });
     
         // Clear current tasks and re-append the sorted tasks
