@@ -86,6 +86,8 @@ $(document).ready(function() {
             `);
         }
 
+        sortTasks(teamMember);
+
         //check if anything checked, if so add strikethrough
         $(document).on('change', 'input[type="checkbox"]', function() {
             if (this.checked) {
@@ -94,9 +96,8 @@ $(document).ready(function() {
                 $(this).closest('.task').css('text-decoration', 'none');
             }
         });
-        
-        sortSectionsByName();
-        sortTasks();        
+
+        sortSectionsByName();      
 
         // Clear the input fields
         $('#task').val('');
@@ -117,20 +118,34 @@ $(document).ready(function() {
     }
 
     // function to sort tasks based on due date (chatGPT)
-    function sortTasks(teammateSection) {
-        let $tasks = $(`#todo_list .name:contains(${teamMember})`).nextUntil('.name', '.task').get();
-
+    function sortTasks(teamMember) {
+        // Get all tasks under the specific teammate
+        let $tasks = $(`#todo_list .name:contains(${teamMember})`).nextUntil('.name'); 
+    
+        // Convert jQuery object to an array for sorting
+        $tasks = $tasks.get();
+    
+        // Sort tasks by due date in ascending order
         $tasks.sort(function(a, b) {
-            let dateA = new Date($(a).find('.due_date').text().replace('Due: ', ''));
-            let dateB = new Date($(b).find('.due_date').text().replace('Due: ', ''));
-            return dateA - dateB;
+            // Extract due date strings and parse them
+            let dateA = new Date($(a).find('.due_date').text().replace('Due: ', '').trim());
+            let dateB = new Date($(b).find('.due_date').text().replace('Due: ', '').trim());
+            
+            // Return comparison for ascending order
+            return dateA - dateB; // Ascending order
         });
-
-        // Re-append the sorted tasks under the correct teammate
+    
+        // Clear current tasks and re-append the sorted tasks
+        let $teammateSection = $(`#todo_list .name:contains(${teamMember})`);
+        $teammateSection.nextUntil('.name').remove(); // Remove current tasks
+    
+        // Append sorted tasks back under the teammate's name
         $tasks.forEach(function(task) {
-            $(task).parent().append(task);
+            $teammateSection.after(task); // Insert tasks after the name
         });
     }
+    
+    
 
     function sortSectionsByName() {
         let $names = $('#todo_list .name'); // Get all name sections
