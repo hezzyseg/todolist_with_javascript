@@ -47,8 +47,9 @@ $(document).ready(function() {
         let dueDate = $('#date_input').val().trim();
 
         //check if anything blank
-        if (!teamMember || !taskName || !dueDate){
+        if (!teamMember || taskName=="" || !dueDate){
             $('#error_message').text('Please choose a team member, write a task, and select a due date.');
+            return;
         }
         //check if due date is earlier than today
         let today = new Date().toISOString().split('T')[0]; 
@@ -85,7 +86,7 @@ $(document).ready(function() {
             `);
         }
 
-        sortTasks($existingTeammateSection.next().parent());
+        sortTasks();
 
 
         // Clear the input fields
@@ -108,14 +109,18 @@ $(document).ready(function() {
 
     // function to sort tasks based on due date (chatGPT)
     function sortTasks(teammateSection) {
-        let tasks = teammateSection.find('.task').toArray();
-        tasks.sort((a, b) => {
-            // Compare due dates in ascending order (earlier dates first)
-            return $(a).data('due_date') < $(b).data('due_date') ? -1 : 1;
+        let tasks = $('#todo_list .task').get();
+
+        tasks.sort(function(a, b) {
+            let dateA = new Date($(a).find('.due_date').text().replace('Due: ', ''));
+            let dateB = new Date($(b).find('.due_date').text().replace('Due: ', ''));
+            return dateA - dateB;
         });
-        // Remove existing tasks and append sorted tasks
-        teammateSection.find('.task').remove();
-        teammateSection.append(tasks);
+
+        // Re-append the sorted tasks
+        tasks.forEach(function(task) {
+            $(task).parent().append(task);
+        });
     }
 
 });
