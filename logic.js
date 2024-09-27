@@ -194,11 +194,6 @@ $(document).ready(function() {
             $('#todo_list').html('No tasks right now.'); // Reset the message
         }
 
-        // If no tasks left under this teammate, remove the teammate section
-        if ($teammateSection.nextUntil('.name', '.task').length === 0) {
-            $teammateSection.remove();
-        }
-
         saveToLocalStorage();
     });
 
@@ -206,6 +201,7 @@ $(document).ready(function() {
     $('#gray_button').on('click', function() {
         if (confirm("Are you sure you want to reset all teammates and to-do items?")) {
             // Clear the input fields
+            localStorage.clear();
             $('#teammate_name').val('');
             $('#task').val('');
             $('#date_input').val('');
