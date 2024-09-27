@@ -186,9 +186,18 @@ $(document).ready(function() {
     
         // Remove checked tasks
         $checkedTasks.each(function() {
-            $(this).closest('.task').remove(); // Remove the entire task div
+            $(this).closest('.task').remove(); 
         });
-    
+
+        // Now, check for teammates without tasks
+        $('#todo_list .name').each(function() {
+            // Check if the teammate has any remaining tasks
+            let $teammateTasks = $(this).nextUntil('.name', '.task'); 
+            if ($teammateTasks.length === 0) {
+                $(this).remove(); //remove name if no tasks left
+            }
+        });
+        
         // Reset message if no tasks remain
         if ($('#todo_list').children('.task').length === 0) {
             $('#todo_list').html('No tasks right now.'); // Reset the message
