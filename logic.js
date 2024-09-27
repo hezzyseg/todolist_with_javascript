@@ -1,4 +1,7 @@
 $(document).ready(function() {
+
+    loadFromLocalStorage();
+
     $('#add').on('click', function() {
         let teammateName = $('#teammate_name').val().trim();
             
@@ -32,12 +35,15 @@ $(document).ready(function() {
             else{
                 $('#error_message').text('Teammate already exists!');
             }
+
         }
 
         //handle blank input
         else{
             $('#error_message').text('Teammate name cannot be blank.');
         }
+
+        saveToLocalStorage();
     });
 
     $('#assign').on('click', function() {
@@ -108,7 +114,7 @@ $(document).ready(function() {
         $('#date_input').val('');
         $('#error_message').text(''); // Clear error message
 
-        
+        saveToLocalStorage();
 
     });
 
@@ -187,31 +193,99 @@ $(document).ready(function() {
         if ($('#todo_list').children('.task').length === 0) {
             $('#todo_list').html('No tasks right now.'); // Reset the message
         }
+
+        // If no tasks left under this teammate, remove the teammate section
+        if ($teammateSection.nextUntil('.name', '.task').length === 0) {
+            $teammateSection.remove();
+        }
+
+        saveToLocalStorage();
     });
 
-    $(document).ready(function() {
     
-        $('#gray_button').on('click', function() {
-            if (confirm("Are you sure you want to reset all teammates and to-do items?")) {
-                // Clear the input fields
-                $('#teammate_name').val('');
-                $('#task').val('');
-                $('#date_input').val('');
-                $('#error_message').text(''); // Clear error message
-    
-                // Clear the dropdown
-                $('#choose_name').empty().append('<option value="" disabled selected>Assign to</option>'); // Reset dropdown
-    
-                // Clear the todo list and add the original message
-                $('#todo_list').html(''); // Remove all tasks
-                $('#todo_list').append('<p>No tasks right now. Please add a teammate and assign a task.</p>'); // Add original message
-    
-                // Re-enable the default option in the dropdown
-                $('#choose_name option[value=""]').prop('disabled', false); // Re-enable the default option
-            }
-        });
-    
+    $('#gray_button').on('click', function() {
+        if (confirm("Are you sure you want to reset all teammates and to-do items?")) {
+            // Clear the input fields
+            $('#teammate_name').val('');
+            $('#task').val('');
+            $('#date_input').val('');
+            $('#error_message').text(''); // Clear error message
+
+            // Clear the dropdown
+            $('#choose_name').empty().append('<option value="" disabled selected>Assign to</option>'); // Reset dropdown
+
+            // Clear the todo list and add the original message
+            $('#todo_list').html(''); // Remove all tasks
+            $('#todo_list').append('<p>No tasks right now. Please add a teammate and assign a task.</p>'); // Add original message
+
+            // Re-enable the default option in the dropdown
+            $('#choose_name option[value=""]').prop('disabled', false); // Re-enable the default option
+        }
+
+        saveToLocalStorage();
     });
+    
+
+     // Function to save current state to local storage
+     function saveToLocalStorage() {
+        let teammates = [];
+        $('#choose_name option').not('[value=""]').each(function() {
+            teammates.push($(this).val());
+        });
+
+        let tasks = [];
+        $('#todo_list .name').each(function() {
+            let name = $(this).text();
+            let tasksForTeammate = $(this).nextUntil('.name', '.task').map(function() {
+                return {
+                    taskName: $(this).find('.task_name').text(),
+                    dueDate: $(this).find('.due_date').text().replace('Due: ', ''),
+                    completed: $(this).find('input[type="checkbox"]').is(':checked')
+                };
+            }).get();
+
+            tasks.push({ name, tasks: tasksForTeammate });
+        });
+
+        let appState = {
+            teammates: teammates,
+            tasks: tasks
+        };
+
+        localStorage.setItem('todoAppState', JSON.stringify(appState));
+    }
+
+    function loadFromLocalStorage() {
+        let savedState = JSON.parse(localStorage.getItem('todoAppState'));
+        if (savedState && savedState.teammates.length > 0) {
+            // Load teammates
+            savedState.teammates.forEach(function(teammate) {
+                $('#choose_name').append(new Option(teammate, teammate));
+            });
+
+            // Load tasks
+            savedState.tasks.forEach(function(teammateSection) {
+                $('#todo_list').append(`<div class="name">${teammateSection.name}</div>`);
+                teammateSection.tasks.forEach(function(task) {
+                    $('#todo_list').append(`
+                        <div class="task">
+                            <span class="task_name">${task.taskName}</span>
+                            <span class="due_date">Due: ${task.dueDate} <input type="checkbox" ${task.completed ? 'checked' : ''}></span>
+                        </div>
+                    `);
+                    if (task.completed) {
+                        $('#todo_list .task:last-child').css('text-decoration', 'line-through');
+                    }
+                });
+            });
+
+            sortSectionsByName();
+            sortTasks();
+        }
+        else{
+            $('#todo_list').html('<p>No tasks right now. Please add a teammate and assign a task.</p>');
+        }
+    }
     
     
     
