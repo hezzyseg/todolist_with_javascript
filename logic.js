@@ -64,6 +64,10 @@ $(document).ready(function() {
         if ($('#todo_list').text().includes('No tasks right now. Please add a teammate and assign a task.')) {
             $('#todo_list').html(''); // Clear the message
         }
+        // Remove other no tasks message if tasks are added
+        if ($('#todo_list').text().includes('No tasks right now.')) {
+            $('#todo_list').html(''); // Clear the message
+        }
 
         // find if teammate section already exists (written w/ help from ChatGPT)
         let $existingTeammateSection = $(`#todo_list .name:contains(${teamMember})`);
@@ -163,6 +167,28 @@ $(document).ready(function() {
             $('#todo_list').append($nameDiv).append($tasks);
         });
     }
+
+    //handle clear completed button
+    $('#green_button').on('click', function() {
+        // Check if there are any tasks
+        let $checkedTasks = $('#todo_list .task input[type="checkbox"]:checked');
+        
+        // If no tasks are checked, do nothing
+        if ($checkedTasks.length === 0) {
+            return;
+        }
+    
+        // Remove checked tasks
+        $checkedTasks.each(function() {
+            $(this).closest('.task').remove(); // Remove the entire task div
+        });
+    
+        // Reset message if no tasks remain
+        if ($('#todo_list').children('.task').length === 0) {
+            $('#todo_list').html('No tasks right now.'); // Reset the message
+        }
+    });
+    
     
         
 });
