@@ -47,7 +47,7 @@ $(document).ready(function() {
         let dueDate = $('#date_input').val().trim();
 
         //check if anything blank
-        if (!teamMember || taskName=="" || !dueDate){
+        if (teamMember=="" || taskName=="" || !dueDate){
             $('#error_message').text('Please choose a team member, write a task, and select a due date.');
             return;
         }
@@ -86,8 +86,17 @@ $(document).ready(function() {
             `);
         }
 
-        sortTasks();
-
+        //check if anything checked, if so add strikethrough
+        $(document).on('change', 'input[type="checkbox"]', function() {
+            if (this.checked) {
+                $(this).closest('.task').css('text-decoration', 'line-through');
+            } else {
+                $(this).closest('.task').css('text-decoration', 'none');
+            }
+        });
+        
+        sortSectionsByName();
+        sortTasks();        
 
         // Clear the input fields
         $('#task').val('');
@@ -109,18 +118,36 @@ $(document).ready(function() {
 
     // function to sort tasks based on due date (chatGPT)
     function sortTasks(teammateSection) {
-        let tasks = $('#todo_list .task').get();
+        let $tasks = $(`#todo_list .name:contains(${teamMember})`).nextUntil('.name', '.task').get();
 
-        tasks.sort(function(a, b) {
+        $tasks.sort(function(a, b) {
             let dateA = new Date($(a).find('.due_date').text().replace('Due: ', ''));
             let dateB = new Date($(b).find('.due_date').text().replace('Due: ', ''));
             return dateA - dateB;
         });
 
-        // Re-append the sorted tasks
-        tasks.forEach(function(task) {
+        // Re-append the sorted tasks under the correct teammate
+        $tasks.forEach(function(task) {
             $(task).parent().append(task);
         });
     }
 
+    function sortSectionsByName() {
+        let $names = $('#todo_list .name'); // Get all name sections
+        
+        let sortedSections = $names.get().sort(function(a, b) {
+            return $(a).text().toLowerCase().localeCompare($(b).text().toLowerCase()); // Sort alphabetically
+        });
+        
+        // Re-arrange the DOM based on the sorted order
+        sortedSections.forEach(function(nameDiv) {
+            let $nameDiv = $(nameDiv);
+            let $tasks = $nameDiv.nextUntil('.name'); // Get all tasks under the current name
+    
+            // Append the name div and its associated tasks in sorted order
+            $('#todo_list').append($nameDiv).append($tasks);
+        });
+    }
+    
+        
 });
