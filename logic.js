@@ -69,7 +69,7 @@ $(document).ready(function() {
             $('#todo_list').html(''); // Clear the message
         }
 
-        // find if teammate section already exists (written w/ help from ChatGPT)
+        // find if teammate section already exists 
         let $existingTeammateSection = $(`#todo_list .name:contains(${teamMember})`);
         if ($existingTeammateSection.length === 0) {
             // Create a new teammate section
@@ -188,6 +188,31 @@ $(document).ready(function() {
             $('#todo_list').html('No tasks right now.'); // Reset the message
         }
     });
+
+    $(document).ready(function() {
+    
+        $('#gray_button').on('click', function() {
+            if (confirm("Are you sure you want to reset all teammates and to-do items?")) {
+                // Clear the input fields
+                $('#teammate_name').val('');
+                $('#task').val('');
+                $('#date_input').val('');
+                $('#error_message').text(''); // Clear error message
+    
+                // Clear the dropdown
+                $('#choose_name').empty().append('<option value="" disabled selected>Assign to</option>'); // Reset dropdown
+    
+                // Clear the todo list and add the original message
+                $('#todo_list').html(''); // Remove all tasks
+                $('#todo_list').append('<p>No tasks right now. Please add a teammate and assign a task.</p>'); // Add original message
+    
+                // Re-enable the default option in the dropdown
+                $('#choose_name option[value=""]').prop('disabled', false); // Re-enable the default option
+            }
+        });
+    
+    });
+    
     
     
         
